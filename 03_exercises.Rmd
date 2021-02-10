@@ -38,24 +38,6 @@ data("garden_planting")
 kids <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-15/kids.csv')
 ```
 
-## Setting up on GitHub!
-
-Before starting your assignment, you need to get yourself set up on GitHub and make sure GitHub is connected to R Studio. To do that, you should read the instruction (through the "Cloning a repo" section) and watch the video [here](https://github.com/llendway/github_for_collaboration/blob/master/github_for_collaboration.md). Then, do the following (if you get stuck on a step, don't worry, I will help! You can always get started on the homework and we can figure out the GitHub piece later):
-
-* Create a repository on GitHub, giving it a nice name so you know it is for the 3rd weekly exercise assignment (follow the instructions in the document/video).  
-* Copy the repo name so you can clone it to your computer. In R Studio, go to file --> New project --> Version control --> Git and follow the instructions from the document/video.  
-* Download the code from this document and save it in the repository folder/project on your computer.  
-* In R Studio, you should then see the .Rmd file in the upper right corner in the Git tab (along with the .Rproj file and probably .gitignore).  
-* Check all the boxes of the files in the Git tab and choose commit.  
-* In the commit window, write a commit message, something like "Initial upload" would be appropriate, and commit the files.  
-* Either click the green up arrow in the commit window or close the commit window and click the green up arrow in the Git tab to push your changes to GitHub.  
-* Refresh your GitHub page (online) and make sure the new documents have been pushed out.  
-* Back in R Studio, knit the .Rmd file. When you do that, you should have two (as long as you didn't make any changes to the .Rmd file, in which case you might have three) files show up in the Git tab - an .html file and an .md file. The .md file is something we haven't seen before and is here because I included `keep_md: TRUE` in the YAML heading. The .md file is a markdown (NOT R Markdown) file that is an interim step to creating the html file. They are displayed fairly nicely in GitHub, so we want to keep it and look at it there. Click the boxes next to these two files, commit changes (remember to include a commit message), and push them (green up arrow).  
-* As you work through your homework, save and commit often, push changes occasionally (maybe after you feel finished with an exercise?), and go check to see what the .md file looks like on GitHub.  
-* If you have issues, let me know! This is new to many of you and may not be intuitive at first. But, I promise, you'll get the hang of it! 
-
-
-
 ## Instructions
 
 * Put your name at the top of the document. 
@@ -96,6 +78,8 @@ garden_harvest %>%
 ```
 
   3. I would like to understand how much money I "saved" by gardening, for each vegetable type. Describe how I could use the `garden_harvest` and `garden_spending` datasets, along with data from somewhere like [this](https://products.wholefoodsmarket.com/search?sort=relevance&store=10542) to answer this question. You can answer this in words, referencing various join functions. You don't need R code but could provide some if it's helpful.
+  
+  
   I would start by joining garden_harvest and garden_spending using left_join by variety. Then I would add the data from whole foods. I would mutate a new variable that subtracts the price from the whole foods. I could then arrange in descending order to see which vegetables I saved the most money for harvesting. 
   
 
@@ -155,7 +139,7 @@ Here is the code to read in the data. We do this a little differently than usual
 
 ```{r cache=TRUE}
 data_site <- 
-  "https://www.macalester.edu/~dshuman1/data/112/2014-Q4-Trips-History-Data-Small.rds" 
+  "https://www.macalester.edu/~dshuman1/data/112/2014-Q4-Trips-History-Data.rds" 
 Trips <- readRDS(gzcon(url(data_site)))
 Stations<-read_csv("http://www.macalester.edu/~dshuman1/data/112/DC-Stations.csv")
 ```
@@ -212,8 +196,8 @@ Trips %>%
 Trips %>% 
   mutate(hour = hour(sdate),
          minute = minute(sdate),
-         time = hour + minute/60) %>% 
-  mutate(day = wday(sdate, label = TRUE)) %>% 
+         time = hour + minute/60, 
+          day = wday(sdate, label = TRUE)) %>% 
   ggplot() + 
   geom_density(aes(x = time)) +
   facet_wrap(vars(day), scales = "free") +
@@ -231,8 +215,8 @@ The variable `client` describes whether the renter is a regular user (level `Reg
 Trips %>% 
   mutate(hour = hour(sdate),
          minute = minute(sdate),
-         time = hour + minute/60) %>% 
-  mutate(day = wday(sdate, label = TRUE)) %>% 
+         time = hour + minute/60, 
+         day = wday(sdate, label = TRUE)) %>% 
   ggplot(aes(x = time, fill = client)) + 
   geom_density(alpha = .5, color = NA) +
   facet_wrap(vars(day), scales = "free") +
@@ -249,8 +233,8 @@ Trips %>%
 Trips %>% 
   mutate(hour = hour(sdate),
          minute = minute(sdate),
-         time = hour + minute/60) %>% 
-  mutate(day = wday(sdate, label = TRUE)) %>% 
+         time = hour + minute/60,
+         day = wday(sdate, label = TRUE)) %>% 
   ggplot(aes(x = time, fill = client)) + 
   geom_density(alpha = .5, color = NA, position = position_stack()) +
   facet_wrap(vars(day), scales = "free") +
@@ -357,9 +341,9 @@ Trips %>%
   
 ```{r}
 Trips %>% 
-  mutate(just_date = as_date(sdate)) %>% 
+  mutate(just_date = as_date(sdate),
+         day = wday(sdate, label = TRUE)) %>% 
   right_join(Top_Ten_Stations, by = c("sstation", "just_date")) %>% 
-  mutate(day = wday(sdate, label = TRUE)) %>%
   group_by(client,day)
   summarise(proportion = n())
 ```
