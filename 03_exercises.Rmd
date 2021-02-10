@@ -343,7 +343,7 @@ Trips %>%
 Trips %>% 
   mutate(just_date = as_date(sdate),
          day = wday(sdate, label = TRUE)) %>% 
-  inner_join(Top_Ten_Stations, by = c("sstation", "just_date")) %>% 
+  right_join(Top_Ten_Stations, by = c("sstation", "just_date")) %>% 
   group_by(client,day) %>% 
   summarise(client_departures = n()) %>% 
   group_by(client) %>% 
